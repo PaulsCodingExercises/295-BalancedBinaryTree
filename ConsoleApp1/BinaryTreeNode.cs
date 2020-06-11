@@ -61,11 +61,24 @@ namespace ConsoleApp1
 
             if (!pass)
             {
+                BinaryTreeNode n4 = n2.Left;
+                n4.InsertLeft(11);
+
+                BinaryTreeNode n11 = n4.Left;
+                n11.InsertRight(12);
+
+                BinaryTreeNode n12 = n11.Right;
+                n12.InsertRight(13);
+
+                BinaryTreeNode n13 = n12.Right;
+                n13.InsertRight(14);
+
                 BinaryTreeNode n8 = n6.Right;
                 n8.InsertLeft(9);
 
                 BinaryTreeNode n9 = n8.Left;
                 n9.InsertRight(10);
+
             }
 
             return n1;

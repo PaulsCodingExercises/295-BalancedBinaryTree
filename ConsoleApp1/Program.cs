@@ -28,9 +28,12 @@ namespace ConsoleApp1
                 BTreePrinter.Print(tree);
 
                 Console.WriteLine("Checking whether tree is superbalanced");
-                bool result = CheckForSuperBalance(tree);
+                int count = 0;
+                bool result = CheckForSuperBalance(tree, ref count);
 
                 Console.WriteLine("Tree result: " + result.ToString());
+                Console.WriteLine("Number of nodes checked: " + count.ToString());
+
 
                 Console.WriteLine("Try again? TRUE or FALSE");
 
@@ -42,37 +45,64 @@ namespace ConsoleApp1
             }
         }
 
-        private static bool CheckForSuperBalance(BinaryTreeNode tree)
+        private static bool CheckForSuperBalance(BinaryTreeNode tree, ref int count)
         {
+            count = 0;
             List<int> depths = new List<int>();
-            CheckIfLeaf(tree, 0, ref depths);
+            CheckIfLeaf(tree, 0, ref depths, ref count);
             bool result;
             if (depths.Count == 0)
                 result = true;
             else
             {
-                int min = depths.Min();
-                int max = depths.Max();
-                result = ((max - min == 0) || (max - min == 1));
+                result = CheckLeafDepthMinMax(depths);
             }
             return result;
         }
 
-        private static void CheckIfLeaf(BinaryTreeNode n, int depth, ref List<int> depths)
+        private static void CheckIfLeaf(BinaryTreeNode n, int depth, ref List<int> depths, ref int count)
         {
+            count++;
+            
             //check if node is leaf
             if ((n.Left == null) && (n.Right == null))
             {
                 if (!depths.Contains(depth))
                     depths.Add(depth);
+
+                //new depth added so check if our fail condition has been met
+                if (!CheckLeafDepthMinMax(depths))
+                    return;
+
             }
             else
             {
                 if (n.Left != null)
-                    CheckIfLeaf(n.Left, depth + 1, ref depths);
+                    CheckIfLeaf(n.Left, depth + 1, ref depths, ref count);
+
+                //check if our fail condition has been met when we traversed the left path
+                if (!CheckLeafDepthMinMax(depths))
+                    return;
+
                 if (n.Right != null)
-                    CheckIfLeaf(n.Right, depth + 1, ref depths);
+                    CheckIfLeaf(n.Right, depth + 1, ref depths, ref count);
             }
+        }
+
+        private static bool CheckLeafDepthMinMax(List<int> depths)
+        {
+            int min, max;
+            if (depths.Count == 0)
+            {
+                min = 0;
+                max = 0;
+            }
+            else
+            {
+                min = depths.Min();
+                max = depths.Max();
+            }
+            return ((max - min == 0) || (max - min == 1));
         }
     }
 }
